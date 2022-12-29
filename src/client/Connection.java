@@ -4,7 +4,7 @@
  */
 package client;
 
-import local.FileSystemModel;
+import java.awt.BorderLayout;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 /**
  *
@@ -46,22 +45,6 @@ public class Connection {
 		}
 	}
         
-        public void createAndSaveFileTree(){
-                    File[] roots = File.listRoots();
-
-                                FileSystemModel file= new FileSystemModel(roots[1]);
-            System.out.println(roots[0]);
-        try {
-           OutputStream os=s.getOutputStream();
-                                
-                                ObjectOutputStream oos=new ObjectOutputStream(os);
-                                oos.writeObject(file);
-                                oos.close();
-        } catch (IOException ex) {
-           ex.printStackTrace();
-        }
-         
-                }
         
 
 	public void Connect() {
@@ -72,10 +55,8 @@ public class Connection {
 			String loginResult = receiver.readLine();
 			if (loginResult.equals("connect success")) {
 				Main.mainScreen.loginResultAction("success");
-                                createAndSaveFileTree();
-                                sender.write("succes to send file tree");
-			sender.newLine();
-			sender.flush();
+
+  
 
 				receiveAndProcessThread = new Thread(() -> {
 					try {
@@ -85,7 +66,25 @@ public class Connection {
 							if (header == null)
 								throw new IOException();
                                                         switch(header){
-                                                            
+                                                            case "request a path":{
+                                                                JButton open=new JButton();
+                                                                JFileChooser fc=new JFileChooser();
+                                                                fc.setDialogTitle("Select folder");
+                                                                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                                                                if(fc.showOpenDialog(open)==JFileChooser.APPROVE_OPTION){
+                                                                    
+                                                                }
+                                                                String path=fc.getSelectedFile().getAbsolutePath();
+                                                              sender.write(path);
+                                                              sender.newLine();
+                                                              sender.flush();
+                                                              String res=receiver.readLine();
+                                                            if(res.equals("success send a path"))
+                                                                			JOptionPane.showMessageDialog(Main.mainScreen, "Gửi đường dẫn để giám sát thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+else
+                                                                			JOptionPane.showMessageDialog(Main.mainScreen, "Gửi đường dẫn để giám sát thất bại", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+                                                            }
                                                         }
 						}
 					} catch (IOException e) {

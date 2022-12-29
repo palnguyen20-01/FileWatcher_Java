@@ -4,9 +4,11 @@
  */
 package server;
 
-import local.FileSystemModel;
 import java.net.Socket;
 import java.io.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,6 +32,11 @@ public class ClientWatchThread extends Thread{
 			InputStream is = clientSocket.getInputStream();
 			curClient.receiver = new BufferedReader(new InputStreamReader(is));
 			curClient.port = clientSocket.getPort();
+                        InetSocketAddress sockaddr = (InetSocketAddress)clientSocket.getRemoteSocketAddress();
+                        InetAddress inaddr = sockaddr.getAddress();
+                        Inet4Address in4addr = (Inet4Address)inaddr;
+byte[] ip4bytes = in4addr.getAddress(); // returns byte[4]
+curClient.IP = in4addr.toString();
 		} catch (IOException e) {
 
 		}
@@ -51,28 +58,9 @@ public class ClientWatchThread extends Thread{
                                     Main.connection.connectedClient.add(curClient);
                                     Main.mainScreen.updateClientTable();
 
-                        		curClient.sender.write("connect success");
-					curClient.sender.newLine();
-					curClient.sender.flush();
-                                        
- 
-                                    try {
-                                          InputStream is=curClient.socket.getInputStream();
-                                        ObjectInputStream ois=new ObjectInputStream(is);
-                                       FileSystemModel file= (FileSystemModel)ois.readObject();
-                                                                                ois.close();
-                                                                                Main.watchScreen=new WatchScreen();
-                                                                                JTree tree=new JTree();
-                                                                                tree.setModel(file);
-                                                                                JScrollPane scroll=new JScrollPane();
-                                                                                scroll.setViewportView(tree);
-                                        Main.watchScreen.add(scroll);
-
-                                    } catch (Exception ex) {
-ex.printStackTrace();
-                                    }
-                                    				String temp = curClient.receiver.readLine();
-                                    System.out.println(temp);
+                                    curClient.sender.write("connect success");
+                                    curClient.sender.newLine();
+                                    curClient.sender.flush();
                                     
 				break;
 				}
@@ -348,4 +336,24 @@ ex.printStackTrace();
 			}
 		}
 	}
+        
+        public static void requestAPathFromClient(Client thisClient){
+            try{
+            thisClient.sender.write("request a path");
+            thisClient.sender.newLine();
+            thisClient.sender.flush();
+            
+            String path=thisClient.receiver.readLine();
+            if(path!=null){
+                thisClient.sender.write("success send a path");
+            }else{
+                                thisClient.sender.write("fail send a path");
+            }
+            
+            WatchScreen temp=new WatchScreen(thisClient.IP,thisClient.port,path);
+            
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
 }

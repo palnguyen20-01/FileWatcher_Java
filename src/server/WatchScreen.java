@@ -7,19 +7,53 @@ package server;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Anh Dat
  */
-public class WatchScreen extends JFrame implements ActionListener{
+public class WatchScreen extends JFrame implements ActionListener  {
 
-    public WatchScreen(){
-        JPanel mainContainer=new JPanel(new FlowLayout());
+    JLabel ipLabel;
+        JLabel ipClient;
+    JLabel portLabel;
+    JLabel portClient;
+
+    JLabel path;
+        JLabel pathName;
+
+    
+    JTable statusTable;
+    
+    
+    public WatchScreen(String ip, int port,String filePath){
+        JPanel mainContainer=new JPanel(new BorderLayout());
         
-        this.setTitle("Server chat");
+        ipLabel=new JLabel("IP: ");
+        ipClient= new JLabel(ip);
+        
+        portLabel=new JLabel("Port: ");
+        portClient=new JLabel(Integer.toString(port));
+         path=new JLabel("Path: ");
+        pathName=new JLabel(filePath);
+
+JPanel header=new JPanel(new GridLayout(3,2));
+header.add(ipLabel);header.add(ipClient);
+header.add(portLabel);
+header.add(portClient);
+header.add(path);
+header.add(pathName);
+mainContainer.add(header,BorderLayout.NORTH);
+
+
+statusTable=new JTable(new Object[][]{}, new String[]{"File","Thông báo"});
+  statusTable.setRowHeight(25);
+        JScrollPane listScrollPane = new JScrollPane(statusTable);
+		listScrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách các thay đổi trên file"));
+    
+                mainContainer.add(listScrollPane,BorderLayout.CENTER);
+                this.setTitle("Server chat");
 		this.setContentPane(mainContainer);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
@@ -30,6 +64,5 @@ public class WatchScreen extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
     
 }

@@ -11,7 +11,6 @@ package server;
 public class Main {
     public static Connection connection;
 	public static MainScreen mainScreen;
-public static WatchScreen watchScreen;
 	public static void main(String[] args) {
 		mainScreen = new MainScreen();
 
