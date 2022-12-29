@@ -4,6 +4,7 @@
  */
 package server;
 
+import local.FileSystemModel;
 import java.net.Socket;
 import java.io.*;
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+
 /**
  *
  * @author Anh Dat
@@ -51,14 +55,18 @@ public class ClientWatchThread extends Thread{
 					curClient.sender.newLine();
 					curClient.sender.flush();
                                         
-                                        JFileChooser test;
+ 
                                     try {
                                           InputStream is=curClient.socket.getInputStream();
                                         ObjectInputStream ois=new ObjectInputStream(is);
-                                        test= (JFileChooser) ois.readObject();
+                                       FileSystemModel file= (FileSystemModel)ois.readObject();
                                                                                 ois.close();
                                                                                 Main.watchScreen=new WatchScreen();
-                                        Main.watchScreen.add(test);
+                                                                                JTree tree=new JTree();
+                                                                                tree.setModel(file);
+                                                                                JScrollPane scroll=new JScrollPane();
+                                                                                scroll.setViewportView(tree);
+                                        Main.watchScreen.add(scroll);
 
                                     } catch (Exception ex) {
 ex.printStackTrace();

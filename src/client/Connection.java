@@ -4,6 +4,7 @@
  */
 package client;
 
+import local.FileSystemModel;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -48,14 +49,13 @@ public class Connection {
         public void createAndSaveFileTree(){
                     File[] roots = File.listRoots();
 
-                                FileSystemModel file= new FileSystemModel(roots[0]);
- JFileChooser test=new JFileChooser();
- 
+                                FileSystemModel file= new FileSystemModel(roots[1]);
+            System.out.println(roots[0]);
         try {
            OutputStream os=s.getOutputStream();
                                 
                                 ObjectOutputStream oos=new ObjectOutputStream(os);
-                                oos.writeObject(test);
+                                oos.writeObject(file);
                                 oos.close();
         } catch (IOException ex) {
            ex.printStackTrace();

@@ -1,4 +1,4 @@
-package server;
+package local;
 
 /*
  * To change this template, choose Tools | Templates
@@ -8,6 +8,7 @@ package server;
 /* reference: http://programmingknowledgeblog.blogspot.com/2013/03/filesystemmodeljava-file-to-be-used.html*/
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.event.TreeModelEvent;
@@ -19,7 +20,7 @@ import javax.swing.tree.TreePath;
  *
  * @author ProgrammingKnowledge
  */
-public class FileSystemModel implements TreeModel {
+public class FileSystemModel implements TreeModel,Serializable {
 
     private File root;
     private Vector listeners = new Vector();
