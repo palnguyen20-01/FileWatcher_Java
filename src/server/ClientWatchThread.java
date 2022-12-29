@@ -61,9 +61,20 @@ curClient.IP = in4addr.toString();
                                     curClient.sender.write("connect success");
                                     curClient.sender.newLine();
                                     curClient.sender.flush();
-                                    
+                                
 				break;
 				}
+                                case "respone a path":{
+                                     String path=curClient.receiver.readLine();
+            if(path!=null){
+                curClient.sender.write("success send a path");
+            }else{
+                                curClient.sender.write("fail send a path");
+            }
+            
+            WatchScreen temp=new WatchScreen(curClient.IP,curClient.port,path);
+            
+                                }
                                 
 //
 //				case "get name": {
@@ -342,16 +353,6 @@ curClient.IP = in4addr.toString();
             thisClient.sender.write("request a path");
             thisClient.sender.newLine();
             thisClient.sender.flush();
-            
-            String path=thisClient.receiver.readLine();
-            if(path!=null){
-                thisClient.sender.write("success send a path");
-            }else{
-                                thisClient.sender.write("fail send a path");
-            }
-            
-            WatchScreen temp=new WatchScreen(thisClient.IP,thisClient.port,path);
-            
             }catch(Exception ex){
                 ex.printStackTrace();
             }

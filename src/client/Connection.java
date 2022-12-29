@@ -67,6 +67,9 @@ public class Connection {
 								throw new IOException();
                                                         switch(header){
                                                             case "request a path":{
+                                                                sender.write("respone a path");
+                                                                    sender.newLine();
+                                                              sender.flush();
                                                                 JButton open=new JButton();
                                                                 JFileChooser fc=new JFileChooser();
                                                                 fc.setDialogTitle("Select folder");

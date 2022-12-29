@@ -53,9 +53,9 @@ statusTable=new JTable(new Object[][]{}, new String[]{"File","Thông báo"});
 		listScrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách các thay đổi trên file"));
     
                 mainContainer.add(listScrollPane,BorderLayout.CENTER);
-                this.setTitle("Server chat");
+                this.setTitle("IP: "+ip+" Path: "+filePath);
 		this.setContentPane(mainContainer);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE );
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
