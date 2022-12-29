@@ -68,12 +68,10 @@ content.add(clientScrollPane);
 mainContainer.add(content,BorderLayout.CENTER);
 
 third.add(openCloseButton);
-//mainContainer.add(third,BorderLayout.SOUTH);
+mainContainer.add(third,BorderLayout.SOUTH);
 
 
-JFileChooser fc=new JFileChooser();
-fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-mainContainer.add(fc);
+
 this.setTitle("Server chat");
 		this.setContentPane(mainContainer);
 		this.getRootPane().setDefaultButton(openCloseButton);

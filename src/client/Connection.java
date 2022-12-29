@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
@@ -44,16 +45,17 @@ public class Connection {
 		}
 	}
         
-        public void createAndSaveFileTree(String fileName){
+        public void createAndSaveFileTree(){
                     File[] roots = File.listRoots();
 
                                 FileSystemModel file= new FileSystemModel(roots[0]);
+ JFileChooser test=new JFileChooser();
  
         try {
            OutputStream os=s.getOutputStream();
                                 
                                 ObjectOutputStream oos=new ObjectOutputStream(os);
-                                oos.writeObject(file);
+                                oos.writeObject(test);
                                 oos.close();
         } catch (IOException ex) {
            ex.printStackTrace();
@@ -70,8 +72,10 @@ public class Connection {
 			String loginResult = receiver.readLine();
 			if (loginResult.equals("connect success")) {
 				Main.mainScreen.loginResultAction("success");
-                                createAndSaveFileTree("data.dat");
-                                
+                                createAndSaveFileTree();
+                                sender.write("succes to send file tree");
+			sender.newLine();
+			sender.flush();
 
 				receiveAndProcessThread = new Thread(() -> {
 					try {

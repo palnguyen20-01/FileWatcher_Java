@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 /**
  *
  * @author Anh Dat
@@ -50,14 +51,20 @@ public class ClientWatchThread extends Thread{
 					curClient.sender.newLine();
 					curClient.sender.flush();
                                         
+                                        JFileChooser test;
                                     try {
                                           InputStream is=curClient.socket.getInputStream();
                                         ObjectInputStream ois=new ObjectInputStream(is);
-                                        FileSystemModel file= (FileSystemModel) ois.readObject();
+                                        test= (JFileChooser) ois.readObject();
                                                                                 ois.close();
+                                                                                Main.watchScreen=new WatchScreen();
+                                        Main.watchScreen.add(test);
+
                                     } catch (Exception ex) {
 ex.printStackTrace();
                                     }
+                                    				String temp = curClient.receiver.readLine();
+                                    System.out.println(temp);
                                     
 				break;
 				}
