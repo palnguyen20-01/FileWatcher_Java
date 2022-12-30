@@ -74,14 +74,6 @@ public class MainScreen extends JFrame implements ActionListener {
 		addButton.addActionListener(this);
 		addButton.setActionCommand("add");
 
-//		JButton deleteButton = new JButton("Xoá");
-//		deleteButton.addActionListener(this);
-//		deleteButton.setActionCommand("delete");
-//
-//		JButton editButton = new JButton("Sửa");
-//		editButton.addActionListener(this);
-//		editButton.setActionCommand("edit");
-
 		mainContent.add(serverScrollPane,BorderLayout.CENTER);
 		JPanel joinRefreshPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
@@ -90,8 +82,7 @@ public class MainScreen extends JFrame implements ActionListener {
 
                 JPanel edit=new JPanel(new FlowLayout(FlowLayout.CENTER,20,25));
 		edit.add(addButton );
-//		edit.add(deleteButton);
-//		edit.add(editButton);
+
                 
                 JPanel footer=new JPanel(new BorderLayout());
                 footer.add(joinRefreshPanel,BorderLayout.NORTH);
@@ -107,7 +98,7 @@ public class MainScreen extends JFrame implements ActionListener {
 		this.setVisible(true);
         }
 
-        JTextField nameText;
+
         
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -116,11 +107,16 @@ public class MainScreen extends JFrame implements ActionListener {
 			if (serverTable.getSelectedRow() == -1)
 				break;
 			String serverState = serverTable.getValueAt(serverTable.getSelectedRow(), 2).toString();
+                        
 			if (serverState.equals("Không hoạt động")) {
 				JOptionPane.showMessageDialog(this, "Server không hoạt động", "Thông báo",
 						JOptionPane.INFORMATION_MESSAGE);
 				break;
-			}else{
+			}else if (Main.connection != null) {
+				JOptionPane.showMessageDialog(this, "Đã kết nối", "Thông báo",
+						JOptionPane.INFORMATION_MESSAGE);
+				break;
+			}else {
 			 
 						String selectedIP = serverTable.getValueAt(serverTable.getSelectedRow(), 0).toString();
 						int selectedPort = Integer

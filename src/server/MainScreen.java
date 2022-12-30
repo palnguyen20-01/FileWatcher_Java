@@ -21,8 +21,6 @@ public class MainScreen extends JFrame implements ActionListener{
     
     JLabel portLabel;
     JTextField portText;
-	JLabel serverNameLabel;
-	JTextField serverNameText;
                 
                 JTable clientTable;
                 JButton openCloseButton;
@@ -36,10 +34,7 @@ public class MainScreen extends JFrame implements ActionListener{
                     portLabel= new JLabel("Port: ");
                     portText= new JTextField();
                     portText.setPreferredSize(new Dimension(150, 20));
-                    
-//                    serverNameLabel = new JLabel("Tên server: ");
-//                    serverNameText = new JTextField();
-//                                        serverNameText.setPreferredSize(new Dimension(150, 20));
+
 
                     openCloseButton= new JButton("Mở server");
                     openCloseButton.addActionListener(this);
@@ -105,8 +100,6 @@ rightFirst.add(portText);
 first.add(leftFirst);
 first.add(rightFirst);
 
-//first.add(serverNameLabel);
-//first.add(serverNameText);
 
 mainContainer.add(first,BorderLayout.NORTH);
 content.add(clientScrollPane);

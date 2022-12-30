@@ -28,9 +28,6 @@ public class Connection {
 FileWatcher watching;
 	Thread receiveAndProcessThread;
 
-//	public List<String> onlineUsers;
-//	public List<Room> allRooms;
-
 	public Connection(Server connectedServer) {
 		try {
 			this.connectedServer = connectedServer;
