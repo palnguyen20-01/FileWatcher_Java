@@ -25,7 +25,7 @@ public class Connection {
 	Socket s;
 	BufferedReader receiver;
 	BufferedWriter sender;
-
+FileWatcher watching;
 	Thread receiveAndProcessThread;
 
 //	public List<String> onlineUsers;
@@ -56,7 +56,7 @@ public class Connection {
 			if (loginResult.equals("connect success")) {
 				Main.mainScreen.loginResultAction("success");
 
-  
+  PathChooser pathChooser= new PathChooser();
 
 				receiveAndProcessThread = new Thread(() -> {
 					try {
@@ -66,6 +66,43 @@ public class Connection {
 							if (header == null)
 								throw new IOException();
                                                         switch(header){
+                                                            case "request choosing":{
+                                                                sender.write("root files");
+                                                                sender.newLine();
+                                                                sender.flush();
+                                                                
+                                                                File[]roots = pathChooser.getRootsFile();
+                                                                sender.write(Integer.toString(roots.length));
+                                                                sender.newLine();
+                                                                sender.flush();
+                                                                
+                                                                for(File item: roots){
+                                                                    sender.write(item.toString());
+                                                                sender.newLine();
+                                                                sender.flush();
+                                                                }
+                                                                
+                                                                break;
+                                                            }
+                                                            case "go into":{
+                                                                String filePath=receiver.readLine();
+                                                                File[]childList=pathChooser.showChild(filePath);
+                                                                
+                                                                sender.write("file choosen");
+                                                                sender.newLine();
+                                                                sender.flush();
+                                                                
+                                                                sender.write(Integer.toString(childList.length));
+                                                                sender.newLine();
+                                                                sender.flush();
+                                                                
+                                                                for(File item: childList){
+                                                                    sender.write(item.toString());
+                                                                sender.newLine();
+                                                                sender.flush();
+                                                                }
+                                                                break;
+                                                            }
                                                             case "request a path":{
                                                                 sender.write("respone a path");
                                                                     sender.newLine();
@@ -86,7 +123,18 @@ public class Connection {
                                                                 			JOptionPane.showMessageDialog(Main.mainScreen, "Gửi đường dẫn để giám sát thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 else
                                                                 			JOptionPane.showMessageDialog(Main.mainScreen, "Gửi đường dẫn để giám sát thất bại", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-
+                                                             sender.write("begin watching");
+                                                                    sender.newLine();
+                                                              sender.flush();
+                                                              watching=new FileWatcher(path);
+                                                              watching.start();
+                                                                 break;
+                                                            }
+                                                            case "stop watching":{
+                                                                watching.interrupt();
+                                                                System.out.println("Stop watching");
+                                                                JOptionPane.showMessageDialog(Main.mainScreen, "Ngắt theo dõi", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                                                                break;
                                                             }
                                                         }
 						}

@@ -44,7 +44,7 @@ public class MainScreen extends JFrame implements ActionListener{
                     openCloseButton= new JButton("Mở server");
                     openCloseButton.addActionListener(this);
                     
-                    clientTable=new JTable(new Object[][]{}, new String[]{"IP","Port"});
+                    clientTable=new JTable(new Object[][]{}, new String[]{"IP","Port","Trạng thái"});
                     clientTable.setRowHeight(25);
                     clientTable.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
 
@@ -53,7 +53,13 @@ public class MainScreen extends JFrame implements ActionListener{
 					boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				
+                                if (column == 2) {
+					c.setForeground(value.toString().equals("Đang theo dõi") ? Color.green : Color.red);
+					c.setFont(new Font("Dialog", Font.BOLD, 13));
+				} else
+					c.setForeground(Color.black);
 
+			
 				return c;
 			}
 		});
@@ -64,18 +70,21 @@ public class MainScreen extends JFrame implements ActionListener{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-			 
-						String selectedIP = clientTable.getValueAt(clientTable.getSelectedRow(), 0).toString();
-						int selectedPort = Integer
+			String serverState = clientTable.getValueAt(clientTable.getSelectedRow(), 2).toString();
+			if (serverState.equals("Đang theo dõi")) {
+				JOptionPane.showMessageDialog(Main.mainScreen, "Đã theo dõi client này", "Thông báo",
+						JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				String selectedIP = clientTable.getValueAt(clientTable.getSelectedRow(), 0).toString();
+				int selectedPort = Integer
 								.parseInt(clientTable.getValueAt(clientTable.getSelectedRow(), 1).toString());
-						Client selectedServer = Main.connection.connectedClient.stream()
+                                Client selectedClient = Main.connection.connectedClient.stream()
 								.filter(x -> x.IP.equals(selectedIP) && x.port == selectedPort).findAny().orElse(null);
-
-						ClientWatchThread.requestAPathFromClient(selectedServer);
-                                                
-                                                
-
-				}
+selectedClient.isWatching=true;
+updateClientTable();
+ClientWatchThread.requestChoosingFromClient(selectedClient);
+//						ClientWatchThread.requestAPathFromClient(selectedClient);                                                
+				}}
 			}
 		});
 
@@ -143,13 +152,15 @@ if (!isConnectionOpen) {
     }
     public void updateClientTable() {
 
-		Object[][] tableContent = new Object[Main.connection.connectedClient.size()][2];
+		Object[][] tableContent = new Object[Main.connection.connectedClient.size()][3];
 		for (int i = 0; i < Main.connection.connectedClient.size(); i++) {
 			tableContent[i][0] = Main.connection.connectedClient.get(i).IP;
 			tableContent[i][1] = Main.connection.connectedClient.get(i).port;
+                        			tableContent[i][2] = Main.connection.connectedClient.get(i).isWatching?"Đang theo dõi":"Chưa theo dõi";
+
 		}
 
-		clientTable.setModel(new DefaultTableModel(tableContent, new String[] { "IP client", "Port client" }){
+		clientTable.setModel(new DefaultTableModel(tableContent, new String[] { "IP client", "Port client","Trạng thái" }){
 
 			@Override
 			public boolean isCellEditable(int arg0, int arg1) {

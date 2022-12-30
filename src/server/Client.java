@@ -19,16 +19,20 @@ public class Client {
 	public Socket socket;
 	public BufferedReader receiver;
 	public BufferedWriter sender;
-
+        public boolean isWatching;
+        public WatchScreen watchScreen;
+        public String pathWatching;
 	public Client(String IP, int port, Socket socket, BufferedReader receiver, BufferedWriter sender) {
 		this.IP = IP;
 		this.port = port;
 		this.socket = socket;
 		this.receiver = receiver;
 		this.sender = sender;
+                this.isWatching=false;
 	}
 
-	public Client() {
+	public Client() {      
+
 	}
 
 	public static Client findClient(List<Client> clientList, String IP) {

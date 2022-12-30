@@ -69,13 +69,13 @@ public class MainScreen extends JFrame implements ActionListener {
 		addButton.addActionListener(this);
 		addButton.setActionCommand("add");
 
-		JButton deleteButton = new JButton("Xoá");
-		deleteButton.addActionListener(this);
-		deleteButton.setActionCommand("delete");
-
-		JButton editButton = new JButton("Sửa");
-		editButton.addActionListener(this);
-		editButton.setActionCommand("edit");
+//		JButton deleteButton = new JButton("Xoá");
+//		deleteButton.addActionListener(this);
+//		deleteButton.setActionCommand("delete");
+//
+//		JButton editButton = new JButton("Sửa");
+//		editButton.addActionListener(this);
+//		editButton.setActionCommand("edit");
 
 		mainContent.add(serverScrollPane,BorderLayout.CENTER);
 		JPanel joinRefreshPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -85,8 +85,8 @@ public class MainScreen extends JFrame implements ActionListener {
 
                 JPanel edit=new JPanel(new FlowLayout(FlowLayout.CENTER,20,25));
 		edit.add(addButton );
-		edit.add(deleteButton);
-		edit.add(editButton);
+//		edit.add(deleteButton);
+//		edit.add(editButton);
                 
                 JPanel footer=new JPanel(new BorderLayout());
                 footer.add(joinRefreshPanel,BorderLayout.NORTH);
@@ -179,21 +179,21 @@ public class MainScreen extends JFrame implements ActionListener {
 
 			break;
 		}
-		case "delete": {
-			if (serverTable.getSelectedRow() == -1)
-				break;
-
-			String selectedIP = serverTable.getValueAt(serverTable.getSelectedRow(), 0).toString();
-			int selectedPort = Integer.parseInt(serverTable.getValueAt(serverTable.getSelectedRow(), 1).toString());
-			for (int i = 0; i < serverList.size(); i++) {
-				if (serverList.get(i).ip.equals(selectedIP) && serverList.get(i).port == selectedPort) {
-					serverList.remove(i);
-					break;
-				}
-			}
-			updateServerTable();
-			break;
-		}
+//		case "delete": {
+//			if (serverTable.getSelectedRow() == -1)
+//				break;
+//
+//			String selectedIP = serverTable.getValueAt(serverTable.getSelectedRow(), 0).toString();
+//			int selectedPort = Integer.parseInt(serverTable.getValueAt(serverTable.getSelectedRow(), 1).toString());
+//			for (int i = 0; i < serverList.size(); i++) {
+//				if (serverList.get(i).ip.equals(selectedIP) && serverList.get(i).port == selectedPort) {
+//					serverList.remove(i);
+//					break;
+//				}
+//			}
+//			updateServerTable();
+//			break;
+//		}
 
 		case "refresh": {
 			updateServerTable();

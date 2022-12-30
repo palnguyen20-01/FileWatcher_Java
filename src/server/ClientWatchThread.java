@@ -23,6 +23,7 @@ import javax.swing.JTree;
  */
 public class ClientWatchThread extends Thread{
     Client curClient;
+       FileChooserScreen fcs;
     public ClientWatchThread(Socket clientSocket){
         try {
 			curClient = new Client();
@@ -37,6 +38,7 @@ public class ClientWatchThread extends Thread{
                         Inet4Address in4addr = (Inet4Address)inaddr;
 byte[] ip4bytes = in4addr.getAddress(); // returns byte[4]
 curClient.IP = in4addr.toString();
+curClient.isWatching=false;
 		} catch (IOException e) {
 
 		}
@@ -51,6 +53,8 @@ curClient.IP = in4addr.toString();
 					throw new IOException();
 
 				System.out.println("Header: " + header);
+                                    
+            
 				switch (header) {
 
 				case "connect": {
@@ -64,261 +68,64 @@ curClient.IP = in4addr.toString();
                                 
 				break;
 				}
-                                case "respone a path":{
-                                     String path=curClient.receiver.readLine();
-            if(path!=null){
-                curClient.sender.write("success send a path");
-            }else{
-                                curClient.sender.write("fail send a path");
-            }
-            
-            WatchScreen temp=new WatchScreen(curClient.IP,curClient.port,path);
-            
+                                
+                                case "root files":{
+                                    int length=Integer.parseInt(curClient.receiver.readLine());
+                                    System.out.println(length);
+                                   ArrayList<String> rootList=new ArrayList<String>();
+                                    for(int i=0;i<length;i++){
+                                        rootList.add(curClient.receiver.readLine());
+                                        System.out.println(rootList.get(i));
+                                    }       
+                                 fcs =new FileChooserScreen(curClient);
+                                    fcs.updateFileTable(rootList);
+                                    break;
                                 }
                                 
-//
-//				case "get name": {
-//					curClient.sender.write(Main.connection.serverName);
-//					curClient.sender.newLine();
-//					curClient.sender.flush();
-//					break;
-//				}
-//
-//				case "get connected count": {
-//					curClient.sender.write("" + Main.connection.connectedClient.size());
-//					curClient.sender.newLine();
-//					curClient.sender.flush();
-//					break;
-//				}
-//
-//				case "request create room": {
-//					String roomName = curClient.receiver.readLine();
-//					String roomType = curClient.receiver.readLine();
-//					int userCount = Integer.parseInt(curClient.receiver.readLine());
-//					List<String> users = new ArrayList<String>();
-//					for (int i = 0; i < userCount; i++)
-//						users.add(curClient.receiver.readLine());
-//
-//					Room newRoom = new Room(roomName, users);
-//					Main.connection.allRooms.add(newRoom);
-//
-//					for (int i = 0; i < userCount; i++) {
-//						BufferedWriter currentClientSender = Client.findClient(Main.connection.connectedClient,
-//								users.get(i)).sender;
-//						currentClientSender.write("new room");
-//						currentClientSender.newLine();
-//						currentClientSender.write("" + newRoom.id);
-//						currentClientSender.newLine();
-//						currentClientSender.write(curClient.userName);
-//						currentClientSender.newLine();
-//						if (roomType.equals("private")) {
-//							// private chat thì tên room của mỗi người sẽ là tên của người kia
-//							currentClientSender.write(users.get(1 - i)); // user 0 thì gửi 1, user 1 thì gửi 0
-//							currentClientSender.newLine();
-//						} else {
-//							currentClientSender.write(roomName);
-//							currentClientSender.newLine();
-//						}
-//						currentClientSender.write(roomType);
-//						currentClientSender.newLine();
-//						currentClientSender.write("" + users.size());
-//						currentClientSender.newLine();
-//						for (String userr : users) {
-//							currentClientSender.write(userr);
-//							currentClientSender.newLine();
-//						}
-//						currentClientSender.flush();
-//					}
-//					break;
-//				}
-//
-//				case "text to room": {
-//					int roomID = Integer.parseInt(curClient.receiver.readLine());
-//					String content = "";
-//					char c;
-//					do {
-//						c = (char) curClient.receiver.read();
-//						if (c != '\0')
-//							content += c;
-//					} while (c != '\0');
-//
-//					Room room = Room.findRoom(Main.connection.allRooms, roomID);
-//					for (String user : room.users) {
-//						System.out.println("Send text from " + curClient.userName + " to " + user);
-//						Client currentClient = Client.findClient(Main.connection.connectedClient, user);
-//						if (currentClient != null) {
-//							currentClient.sender.write("text from user to room");
-//							currentClient.sender.newLine();
-//							currentClient.sender.write(curClient.userName);
-//							currentClient.sender.newLine();
-//							currentClient.sender.write("" + roomID);
-//							currentClient.sender.newLine();
-//							currentClient.sender.write(content);
-//							currentClient.sender.write('\0');
-//							currentClient.sender.flush();
-//						}
-//					}
-//					break;
-//				}
-//
-//				case "file to room": {
-//					int roomID = Integer.parseInt(curClient.receiver.readLine());
-//					int roomMessagesCount = Integer.parseInt(curClient.receiver.readLine());
-//					String fileName = curClient.receiver.readLine();
-//					int fileSize = Integer.parseInt(curClient.receiver.readLine());
-//
-//					File filesFolder = new File("files");
-//					if (!filesFolder.exists())
-//						filesFolder.mkdir();
-//
-//					int dotIndex = fileName.lastIndexOf('.');
-//					String saveFileName = "files/" + fileName.substring(0, dotIndex)
-//							+ String.format("%02d%03d", roomID, roomMessagesCount) + fileName.substring(dotIndex);
-//
-//					File file = new File(saveFileName);
-//					byte[] buffer = new byte[1024];
-//					InputStream in = curClient.socket.getInputStream();
-//					OutputStream out = new FileOutputStream(file);
-//
-//					int receivedSize = 0;
-//					int count;
-//					while ((count = in.read(buffer)) > 0) {
-//						out.write(buffer, 0, count);
-//						receivedSize += count;
-//						if (receivedSize >= fileSize)
-//							break;
-//					}
-//
-//					out.close();
-//
-//					Room room = Room.findRoom(Main.connection.allRooms, roomID);
-//					for (String user : room.users) {
-//						Client currentClient = Client.findClient(Main.connection.connectedClient, user);
-//						if (currentClient != null) {
-//							currentClient.sender.write("file from user to room");
-//							currentClient.sender.newLine();
-//							currentClient.sender.write(curClient.userName);
-//							currentClient.sender.newLine();
-//							currentClient.sender.write("" + roomID);
-//							currentClient.sender.newLine();
-//							currentClient.sender.write(fileName);
-//							currentClient.sender.newLine();
-//							currentClient.sender.flush();
-//						}
-//					}
-//					break;
-//				}
-//
-//				case "audio to room": {
-//					int roomID = Integer.parseInt(curClient.receiver.readLine());
-//					int roomMessagesCount = Integer.parseInt(curClient.receiver.readLine());
-//					int audioDuration = Integer.parseInt(curClient.receiver.readLine());
-//					int audioByteSize = Integer.parseInt(curClient.receiver.readLine());
-//
-//					File filesFolder = new File("files");
-//					if (!filesFolder.exists())
-//						filesFolder.mkdir();
-//
-//					String audioFileName = "files/audio" + String.format("%02d%03d", roomID, roomMessagesCount);
-//
-//					File file = new File(audioFileName);
-//					byte[] buffer = new byte[1024];
-//					InputStream in = curClient.socket.getInputStream();
-//					OutputStream out = new FileOutputStream(file);
-//
-//					int receivedSize = 0;
-//					int count;
-//					while ((count = in.read(buffer)) > 0) {
-//						out.write(buffer, 0, count);
-//						receivedSize += count;
-//						if (receivedSize >= audioByteSize)
-//							break;
-//					}
-//
-//					out.close();
-//
-//					Room room = Room.findRoom(Main.connection.allRooms, roomID);
-//					for (String user : room.users) {
-//						Client currentClient = Client.findClient(Main.connection.connectedClient, user);
-//						if (currentClient != null) {
-//							currentClient.sender.write("audio from user to room");
-//							currentClient.sender.newLine();
-//							currentClient.sender.write(curClient.userName);
-//							currentClient.sender.newLine();
-//							currentClient.sender.write("" + roomID);
-//							currentClient.sender.newLine();
-//							currentClient.sender.write("" + audioDuration);
-//							currentClient.sender.newLine();
-//							currentClient.sender.flush();
-//						}
-//					}
-//					break;
-//				}
-//
-//				case "request download file": {
-//					try {
-//						int roomID = Integer.parseInt(curClient.receiver.readLine());
-//						int messageIndex = Integer.parseInt(curClient.receiver.readLine());
-//						String fileName = curClient.receiver.readLine();
-//
-//						int dotIndex = fileName.lastIndexOf('.');
-//						fileName = "files/" + fileName.substring(0, dotIndex)
-//								+ String.format("%02d%03d", roomID, messageIndex) + fileName.substring(dotIndex);
-//						File file = new File(fileName);
-//
-//						curClient.sender.write("response download file");
-//						curClient.sender.newLine();
-//						curClient.sender.write("" + file.length());
-//						curClient.sender.newLine();
-//						curClient.sender.flush();
-//
-//						byte[] buffer = new byte[1024];
-//						InputStream in = new FileInputStream(file);
-//						OutputStream out = curClient.socket.getOutputStream();
-//
-//						int count;
-//						while ((count = in.read(buffer)) > 0) {
-//							out.write(buffer, 0, count);
-//						}
-//
-//						in.close();
-//						out.flush();
-//					} catch (IOException ex) {
-//						ex.printStackTrace();
-//					}
-//					break;
-//				}
-//
-//				case "request audio bytes": {
-//					try {
-//						int roomID = Integer.parseInt(curClient.receiver.readLine());
-//						int messageIndex = Integer.parseInt(curClient.receiver.readLine());
-//
-//						String audioFileName = "files/audio" + String.format("%02d%03d", roomID, messageIndex);
-//						File file = new File(audioFileName);
-//
-//						curClient.sender.write("response audio bytes");
-//						curClient.sender.newLine();
-//						curClient.sender.write("" + file.length());
-//						curClient.sender.newLine();
-//						curClient.sender.flush();
-//
-//						byte[] buffer = new byte[1024];
-//						InputStream in = new FileInputStream(file);
-//						OutputStream out = curClient.socket.getOutputStream();
-//
-//						int count;
-//						while ((count = in.read(buffer)) > 0) {
-//							out.write(buffer, 0, count);
-//						}
-//
-//						in.close();
-//						out.flush();
-//					} catch (IOException ex) {
-//						ex.printStackTrace();
-//					}
-//					break;
-//				}
+                                       case "file choosen":{
+                                    int length=Integer.parseInt(curClient.receiver.readLine());
+                                   ArrayList<String> childList=new ArrayList<String>();
+                                    for(int i=0;i<length;i++){
+                                        childList.add(curClient.receiver.readLine());
+                                        System.out.println(childList.get(i));
+                                    }       
+                                    fcs.updateFileTable(childList);
+                                    break;
+                                }
+                                
+                                case "respone a path":{
+                                     curClient.pathWatching=curClient.receiver.readLine();
+            if(curClient.pathWatching!=null){
+                curClient.sender.write("success send a path");
+                  curClient.sender.newLine();
+                                    curClient.sender.flush();
+            }else{
+                                curClient.sender.write("fail send a path");
+                                  curClient.sender.newLine();
+                                    curClient.sender.flush();
+            }
+            				break;
+               }
+                                case "begin watching":{
+                                    curClient.watchScreen =new WatchScreen(curClient.IP,curClient.port,curClient.pathWatching,curClient);
+            curClient.watchScreen.fileList=new ArrayList<String>();
+            curClient.watchScreen.eventList=new ArrayList<String>();
+            				break;
+
+                                }
+                                case "event found":{
+                                    
+                String file=curClient.receiver.readLine();
+                String event=curClient.receiver.readLine();
+                curClient.watchScreen.fileList.add(file);
+                curClient.watchScreen.eventList.add(event);
+                curClient.watchScreen.updateStatusTable( curClient.watchScreen.fileList, curClient.watchScreen.eventList);
+                System.out.println(file+" : "+event);
+                				break;
+
+                                }
+                                    
+
 
 				}
 			}
@@ -351,6 +158,30 @@ curClient.IP = in4addr.toString();
         public static void requestAPathFromClient(Client thisClient){
             try{
             thisClient.sender.write("request a path");
+            thisClient.sender.newLine();
+            thisClient.sender.flush();
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+        
+        public static void requestChoosingFromClient(Client thisClient){
+            try{
+            thisClient.sender.write("request choosing");
+            thisClient.sender.newLine();
+            thisClient.sender.flush();
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+        
+        public static void goInto(Client thisClient,String path){
+            try{
+            thisClient.sender.write("go into");
+            thisClient.sender.newLine();
+            thisClient.sender.flush();
+            
+            thisClient.sender.write(path);
             thisClient.sender.newLine();
             thisClient.sender.flush();
             }catch(Exception ex){
