@@ -82,8 +82,10 @@ public class MainScreen extends JFrame implements ActionListener{
 								.filter(x -> x.IP.equals(selectedIP) && x.port == selectedPort).findAny().orElse(null);
 selectedClient.isWatching=true;
 updateClientTable();
+ClientWatchThread.fcs =new FileChooserScreen(selectedClient);
+
 ClientWatchThread.requestChoosingFromClient(selectedClient);
-//						ClientWatchThread.requestAPathFromClient(selectedClient);                                                
+
 				}}
 			}
 		});

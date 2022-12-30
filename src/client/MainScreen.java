@@ -38,12 +38,17 @@ public class MainScreen extends JFrame implements ActionListener {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 					boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				if (column == 2) {
-					c.setForeground(value.toString().equals("Hoạt động") ? Color.green : Color.red);
+				if(column==2){
+                                    c.setForeground((value.toString().equals("Hoạt động")||value.toString().equals("Đang theo dõi")) ? Color.green : Color.red);
 					c.setFont(new Font("Dialog", Font.BOLD, 13));
-				} else
+                                }else if(column==3){
+                                     c.setForeground((value.toString().equals("Đang theo dõi")||value.toString().equals("Đang theo dõi")) ? Color.green : Color.red);
+					c.setFont(new Font("Dialog", Font.BOLD, 13));
+                                }else
 					c.setForeground(Color.black);
 
+                                
+                                
 				return c;
 			}
 		});
@@ -179,21 +184,6 @@ public class MainScreen extends JFrame implements ActionListener {
 
 			break;
 		}
-//		case "delete": {
-//			if (serverTable.getSelectedRow() == -1)
-//				break;
-//
-//			String selectedIP = serverTable.getValueAt(serverTable.getSelectedRow(), 0).toString();
-//			int selectedPort = Integer.parseInt(serverTable.getValueAt(serverTable.getSelectedRow(), 1).toString());
-//			for (int i = 0; i < serverList.size(); i++) {
-//				if (serverList.get(i).ip.equals(selectedIP) && serverList.get(i).port == selectedPort) {
-//					serverList.remove(i);
-//					break;
-//				}
-//			}
-//			updateServerTable();
-//			break;
-//		}
 
 		case "refresh": {
 			updateServerTable();
@@ -203,14 +193,7 @@ public class MainScreen extends JFrame implements ActionListener {
     }
     public void loginResultAction(String result) {
 		if (result.equals("success")) {
-//			String selectedIP = serverTable.getValueAt(serverTable.getSelectedRow(), 0).toString();
-//			int selectedPort = Integer.parseInt(serverTable.getValueAt(serverTable.getSelectedRow(), 1).toString());
-//			connectedServer = serverList.stream().filter(x -> x.ip.equals(selectedIP) && x.port == selectedPort)
-//					.findAny().orElse(null);
-//
-//			this.setVisible(false);
-//			this.dispose();
-//			Main.mainScreen = new MainScreen();
+
 			JOptionPane.showMessageDialog(this, "Kết nối thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
 		} else if (result.equals("existed"))
@@ -222,11 +205,12 @@ public class MainScreen extends JFrame implements ActionListener {
 public Object[][] getServerObjectMatrix(List<Server> serverList) {
 		if (serverList == null)
 			return new Object[][] {};
-		Object[][] serverObjMatrix = new Object[serverList.size()][6];
+		Object[][] serverObjMatrix = new Object[serverList.size()][4];
 		for (int i = 0; i < serverList.size(); i++) {
 			serverObjMatrix[i][0] = serverList.get(i).ip;
 			serverObjMatrix[i][1] = serverList.get(i).port;
 			serverObjMatrix[i][2] = serverList.get(i).isOpen ? "Hoạt động" : "Không hoạt động";
+                        serverObjMatrix[i][3] = serverList.get(i).isWatching ? "Đang theo dõi" : "Chưa theo dõi";
 		}
 		return serverObjMatrix;
 	}
@@ -238,9 +222,11 @@ public Object[][] getServerObjectMatrix(List<Server> serverList) {
 			if (serverData.isOpen) {
 			}
 		}
+                
+         
 
 		serverTable.setModel(new DefaultTableModel(getServerObjectMatrix(serverList), new String[] {
-				"IP server", "Port server", "Trạng thái"}) {
+				"IP server", "Port server", "Trạng thái hoạt động","Theo dõi"}) {
 
 			@Override
 			public boolean isCellEditable(int arg0, int arg1) {

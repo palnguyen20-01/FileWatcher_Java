@@ -73,20 +73,7 @@ fileTable=new JTable(new Object[][]{}, new String[]{"Đường dẫn"});
                 goIntoBtn =new JButton("Go into");
                 goIntoBtn.addActionListener(this);
 		goIntoBtn.setActionCommand("go into");
-                
-                 this.addWindowListener(new WindowAdapter(){
-                   public void windowClosed(WindowEvent windowEvent){      
-                       try{
-                System.out.println("Stop choosing");
-                curClient.isWatching=false;
-                Main.mainScreen.updateClientTable();
-            curClient.sender.write("stop watching");
-            curClient.sender.newLine();
-            curClient.sender.flush();
-                   }catch(Exception ex){
-                       ex.printStackTrace();
-                   }}
-                });
+                             
                 
                 okBtn=new JButton("Ok");
                 okBtn.addActionListener(this);
@@ -95,11 +82,13 @@ fileTable=new JTable(new Object[][]{}, new String[]{"Đường dẫn"});
                 backBtn=new JButton("Back");
                 backBtn.addActionListener(this);
 		backBtn.setActionCommand("back");
-                
+                                            backBtn.setEnabled(false);
+
                 footer.add(goIntoBtn);
                                 footer.add(okBtn);
                 footer.add(backBtn);
 
+                            backBtn.setEnabled(false);
                                 mainContainer.add(footer,BorderLayout.SOUTH);
 
                 
@@ -118,25 +107,40 @@ fileTable=new JTable(new Object[][]{}, new String[]{"Đường dẫn"});
 			if (fileTable.getSelectedRow() == -1)
 				break;
 			String filePath = fileTable.getValueAt(fileTable.getSelectedRow(), 0).toString();
-			this.parent.add(filePath);
+			
+                        if(!this.parent.contains(filePath))
+                        this.parent.add(filePath);
+                        
                         ClientWatchThread.goInto(curClient,filePath);
-			break;
+			
+                        if(parent.isEmpty()){
+                            backBtn.setEnabled(false);
+                        }else
+                            backBtn.setEnabled(true);
+                        break;
+                        
 		}
                 case "ok": {
 			if (fileTable.getSelectedRow() == -1)
 				break;
 			String filePath = fileTable.getValueAt(fileTable.getSelectedRow(), 0).toString();
-			
-                        ClientWatchThread.goInto(curClient,filePath);
+			curClient.pathWatching=filePath;
+                       ClientWatchThread.requestAPathFromClient(curClient);
 			break;
 		}
                 case "back": {
-			
-			String filePath = this.parent.get(this.parent.size()-1);
+			if(!backBtn.isEnabled() || parent.size()==1){
+                        ClientWatchThread.requestChoosingFromClient(curClient);
+                        backBtn.setEnabled(false);
+                        }
+                        else {
+                            
+                            String filePath = this.parent.get(this.parent.size()-2);
                         this.parent.remove(this.parent.size()-1);
-
+                        
                         ClientWatchThread.goInto(curClient,filePath);
-			break;
+                        }
+			
 		}
                 
 		}

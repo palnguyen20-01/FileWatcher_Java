@@ -23,7 +23,7 @@ import javax.swing.JTree;
  */
 public class ClientWatchThread extends Thread{
     Client curClient;
-       FileChooserScreen fcs;
+     public static FileChooserScreen fcs;
     public ClientWatchThread(Socket clientSocket){
         try {
 			curClient = new Client();
@@ -39,6 +39,7 @@ public class ClientWatchThread extends Thread{
 byte[] ip4bytes = in4addr.getAddress(); // returns byte[4]
 curClient.IP = in4addr.toString();
 curClient.isWatching=false;
+
 		} catch (IOException e) {
 
 		}
@@ -77,7 +78,6 @@ curClient.isWatching=false;
                                         rootList.add(curClient.receiver.readLine());
                                         System.out.println(rootList.get(i));
                                     }       
-                                 fcs =new FileChooserScreen(curClient);
                                     fcs.updateFileTable(rootList);
                                     break;
                                 }
@@ -93,9 +93,12 @@ curClient.isWatching=false;
                                     break;
                                 }
                                 
-                                case "respone a path":{
-                                     curClient.pathWatching=curClient.receiver.readLine();
-            if(curClient.pathWatching!=null){
+                                case "respone a path":{    
+                    curClient.sender.write(curClient.pathWatching);
+                  curClient.sender.newLine();
+                                    curClient.sender.flush();
+                                    
+                                    if(curClient.pathWatching!=null){
                 curClient.sender.write("success send a path");
                   curClient.sender.newLine();
                                     curClient.sender.flush();
@@ -107,6 +110,7 @@ curClient.isWatching=false;
             				break;
                }
                                 case "begin watching":{
+                                    fcs.dispose();
                                     curClient.watchScreen =new WatchScreen(curClient.IP,curClient.port,curClient.pathWatching,curClient);
             curClient.watchScreen.fileList=new ArrayList<String>();
             curClient.watchScreen.eventList=new ArrayList<String>();
@@ -170,6 +174,8 @@ curClient.isWatching=false;
             thisClient.sender.write("request choosing");
             thisClient.sender.newLine();
             thisClient.sender.flush();
+            
+            
             }catch(Exception ex){
                 ex.printStackTrace();
             }
@@ -184,6 +190,7 @@ curClient.isWatching=false;
             thisClient.sender.write(path);
             thisClient.sender.newLine();
             thisClient.sender.flush();
+            
             }catch(Exception ex){
                 ex.printStackTrace();
             }

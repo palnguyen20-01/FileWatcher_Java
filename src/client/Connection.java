@@ -107,17 +107,8 @@ FileWatcher watching;
                                                                 sender.write("respone a path");
                                                                     sender.newLine();
                                                               sender.flush();
-                                                                JButton open=new JButton();
-                                                                JFileChooser fc=new JFileChooser();
-                                                                fc.setDialogTitle("Select folder");
-                                                                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                                                                if(fc.showOpenDialog(open)==JFileChooser.APPROVE_OPTION){
-                                                                    
-                                                                }
-                                                                String path=fc.getSelectedFile().getAbsolutePath();
-                                                              sender.write(path);
-                                                              sender.newLine();
-                                                              sender.flush();
+                                                              
+                                                               String path=receiver.readLine();
                                                               String res=receiver.readLine();
                                                             if(res.equals("success send a path"))
                                                                 			JOptionPane.showMessageDialog(Main.mainScreen, "Gửi đường dẫn để giám sát thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -126,6 +117,10 @@ else
                                                              sender.write("begin watching");
                                                                     sender.newLine();
                                                               sender.flush();
+                                                              
+                                                              connectedServer.isWatching=true;
+                                                              Main.mainScreen.updateServerTable();
+                                                              
                                                               watching=new FileWatcher(path);
                                                               watching.start();
                                                                  break;
@@ -134,6 +129,8 @@ else
                                                                 watching.interrupt();
                                                                 System.out.println("Stop watching");
                                                                 JOptionPane.showMessageDialog(Main.mainScreen, "Ngắt theo dõi", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                                                                connectedServer.isWatching=false;
+                                                              Main.mainScreen.updateServerTable();
                                                                 break;
                                                             }
                                                         }
@@ -172,29 +169,6 @@ else
                 
                 
                 
-//        public static String serverName(String ip, int port) {
-//
-//		if (!serverOnline(ip, port))
-//			return "";
-//
-//		try {
-//			Socket s = new Socket(ip, port);
-//			InputStream is = s.getInputStream();
-//			BufferedReader receiver = new BufferedReader(new InputStreamReader(is));
-//			OutputStream os = s.getOutputStream();
-//			BufferedWriter sender = new BufferedWriter(new OutputStreamWriter(os));
-//
-//			sender.write("get name");
-//			sender.newLine();
-//			sender.flush();
-//
-//			String name = receiver.readLine();
-//
-//			s.close();
-//			return name;
-//		} catch (IOException ex) {
-//			return "";
-//		}
-//	}
+
                 
 }

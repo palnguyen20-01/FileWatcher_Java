@@ -12,11 +12,12 @@ public class Server {
 	public String ip;
 	public int port;
 	public boolean isOpen;
-
+public boolean isWatching=false;
 	public Server(String ip, int port) {
 		this.ip = ip;
 		this.port = port;
 		this.isOpen = false;
+                
 	}
 
 	public Server(String ip, int port, boolean isOpen) {
