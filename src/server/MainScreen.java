@@ -110,7 +110,7 @@ mainContainer.add(third,BorderLayout.SOUTH);
 
 
 
-this.setTitle("Server chat");
+this.setTitle("Server Watcher");
 		this.setContentPane(mainContainer);
 		this.getRootPane().setDefaultButton(openCloseButton);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

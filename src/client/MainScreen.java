@@ -90,7 +90,7 @@ public class MainScreen extends JFrame implements ActionListener {
                 
                 mainContent.add(footer,BorderLayout.SOUTH);
 
-		this.setTitle("Ứng dụng chat");
+		this.setTitle("Client Watcher");
 		this.setContentPane(mainContent);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
